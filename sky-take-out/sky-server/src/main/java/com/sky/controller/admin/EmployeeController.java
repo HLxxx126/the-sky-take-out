@@ -119,4 +119,18 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
+    /**
+     * ç
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("アカウントの有効化/無効化")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("アカウント:{},{}の有効化/無効化",id,status);
+        employeeService.startOrStop(status,id);
+        return Result.success();
+    }
+
 }

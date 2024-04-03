@@ -32,4 +32,10 @@ public interface EmployeeMapper {
      * @return
      */
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+
+    /**
+     * 従業員情報を変更する。
+     * @param employee
+     */
+    void update(Employee employee);
 }

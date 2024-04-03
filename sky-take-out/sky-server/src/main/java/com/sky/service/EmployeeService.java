@@ -27,4 +27,11 @@ public interface EmployeeService {
      * @return
      */
     PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+
+    /**
+     * アカウントの有効化/無効化
+     * @param status
+     * @param id
+     */
+    void startOrStop(Integer status, Long id);
 }
