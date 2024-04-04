@@ -123,4 +123,30 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.update(employee);
     }
 
+    /**
+     * Idに基づいて従業員の情報を検索する
+     * @param id
+     * @return
+     */
+    @Override
+    public Employee getById(Long id) {
+      Employee employee = employeeMapper.getById(id);
+      employee.setPassword("****");
+        return employee;
+    }
+
+    /**
+     * 従業員の情報を修正する
+     * @param employeeDTO
+     */
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.update(employee);
+    }
+
+
 }

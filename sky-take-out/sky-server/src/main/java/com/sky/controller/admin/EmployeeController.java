@@ -133,4 +133,28 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * Idに基づいて従業員の情報を検索する
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("Idに基づいて従業員の情報を検索する")
+    public Result<Employee> getById(@PathVariable Long id){
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    /**
+     * 従業員の情報を修正する
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("従業員の情報を修正する")
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("従業員の情報を修正する：{}",employeeDTO);
+        employeeService.update(employeeDTO);
+        return Result.success();
+    }
 }
