@@ -108,8 +108,58 @@ public class DishServiceImpl implements DishService {
 
         //メニューのIdの集合に基づいて、関連の味付けを一括で削除します。
         dishFlavorMapper.deleteByDishIds(ids);
+    }
 
+    /**
+     * Idに基づいてメニューと関連の味付けを検索する
+     * @param id
+     * @return
+     */
+    @Override
+    public DishVO getByIdWithFlavor(Long id) {
+        //Idに基づいてメニューのデータを検索する
+        Dish dish = dishMapper.getById(id);
+        //メニューのIdに基づいて関連の味付けのデータを検索する
+        List<DishFlavor> dishFlavors= dishFlavorMapper.getByDishId(id);
+        //検索したデータをdishVOに封装します
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish,dishVO);
+        dishVO.setFlavors(dishFlavors);
+        return dishVO;
 
+    }
 
+    /**
+     * Idに基づいてメニューのデータと関連の味付けを修正する
+     * @param dishDTO
+     */
+    @Override
+    public void updateWithFlavor(DishDTO dishDTO) {
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO,dish);
+        dishMapper.update(dish);
+
+        dishFlavorMapper.deleteByDishId(dishDTO.getId());
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && flavors.size() > 0 ){
+            flavors.forEach(dishFlavor -> {
+                dishFlavor.setDishId(dishDTO.getId());
+            });
+        dishFlavorMapper.insertBatch(flavors);
+        }
+    }
+
+    /**
+     * メニューの有効化/無効化
+     * @param id
+     * @param status
+     */
+    @Override
+    public void startOrStop(Long id, Integer status) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.update(dish);
     }
 }
