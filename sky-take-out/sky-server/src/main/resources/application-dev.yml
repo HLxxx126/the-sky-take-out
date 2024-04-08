@@ -6,8 +6,14 @@ sky:
     database: sky_take_out
     username: root
     password: 7942Ud38
+
   alioss:
     bucket-name: itheima-sky-take-out
     endpoint: oss-cn-beijing.aliyuncs.com
     access-key-id: LTAI4GKKRZkaZk3FxcP9fiuZ
     access-key-secret: rkPgyyNqCFmXraP0xJTf4hB19zSQwC
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 10
