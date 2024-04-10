@@ -24,4 +24,28 @@ public interface SetmealService {
      */
     List<DishItemVO> getDishItemById(Long id);
 
+    /**
+     * 新しいセットメニューを増加する
+     * @param setmealDTO
+     */
+    void saveWithDish(SetmealDTO setmealDTO);
+
+    /**
+     * セットメニューのページングクエリ
+     * @param setmealPageQueryDTO
+     * @return
+     */
+    PageResult pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * すべてのセットメニューのキャッシュをクリアします
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
+
+    SetmealVO getByIdWithDish(Long id);
+
+    void update(SetmealDTO setmealDTO);
+
+    void startOrStop(Integer status, Long id);
 }

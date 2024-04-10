@@ -2,6 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetmealMapper">
+    <insert id="insert" parameterType="setmeal" useGeneratedKeys="true" keyProperty="id">
+       insert into sky_take_out.setmeal values (null,#{categoryId},#{name},#{price},#{status}," +
+            "#{description},#{image},#{createTime},#{updateTime},#{createUser},#{updateUser})
+    </insert>
+    <update id="update">
+        update setmeal
+        <set>
+            <if test="categoryId!=null">category_id=#{categoryId},</if>
+            <if test="name!=null and name!=''">`name`=#{name},</if>
+            <if test="price!=null">price=#{price},</if>
+            <if test="status!=null">status=#{status},</if>
+            <if test="description!=null and description!=''">description=#{description},</if>
+            <if test="image!=null and image!=''">image=#{image},</if>
+            <if test="createTime!=null">create_time=#{createTime},</if>
+            <if test="updateTime!=null">update_time=#{updateTime},</if>
+            <if test="createUser!=null">create_user=#{createUser},</if>
+            <if test="updateUser!=null">update_user=#{updateUser}</if>
+        </set>
+        where id = #{id}
+    </update>
 
     <select id="list" parameterType="Setmeal" resultType="Setmeal">
         select * from setmeal
@@ -16,5 +36,20 @@
                 and status = #{status}
             </if>
         </where>
+    </select>
+    <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
+        select s.*,c.name as categoryName from setmeal s  left outer join category c on s.category_id = c.id
+        <where>
+            <if test="name != null">
+                and s.name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and s.category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and s.status = #{status}
+            </if>
+        </where>
+        order by s.create_time desc
     </select>
 </mapper>
