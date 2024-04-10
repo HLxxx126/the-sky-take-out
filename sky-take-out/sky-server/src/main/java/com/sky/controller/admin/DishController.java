@@ -1,5 +1,4 @@
 package com.sky.controller.admin;
-
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
@@ -11,9 +10,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author HLxxx
@@ -28,6 +28,8 @@ import java.util.List;
 public class DishController {
     @Autowired
     private DishService dishService;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /**
      * 新しいメニューを増加する
@@ -40,6 +42,10 @@ public class DishController {
     public Result save(@RequestBody DishDTO dishDTO) {
         log.info("新しいメニューを増加する:{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);
+        //キャッシュデータをクリアします
+        String key = "dish_"+dishDTO.getCategoryId();
+//        redisTemplate.delete(key);
+        cleanCache(key);
         return Result.success();
     }
 
@@ -67,6 +73,10 @@ public class DishController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("メニューの一括削除:{}", ids);
         dishService.deleteBatch(ids);
+        //べてのメニューのキャッシュをクリアします
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
+        cleanCache("dish_*");
         return Result.success();
     }
 
@@ -94,14 +104,50 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO){
         log.info("メニューのデータを修正する:{}",dishDTO);
         dishService.updateWithFlavor(dishDTO);
+        //べてのメニューのキャッシュをクリアします
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
+        cleanCache("dish_*");
         return Result.success();
     }
+
+    /**
+     * メニューの有効化/無効化
+     * @param id
+     * @param status
+     * @return
+     */
     @PostMapping("/status/{status}")
     @ApiOperation("メニューの有効化/無効化")
     public Result status(Long id,@PathVariable Integer status){
         log.info("メニューの有効化/無効化");
         dishService.startOrStop(id,status);
+        //べてのメニューのキャッシュをクリアします
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
+        cleanCache("dish_*");
         return Result.success();
+    }
+
+    /**
+     * カテゴリIdに基づいてメニューを検索する
+     * @param categoryId
+     * @return
+     */
+    @GetMapping("/list")
+    @ApiOperation("カテゴリIdに基づいてメニューを検索する")
+    public Result<List<Dish>> list(Long categoryId){
+        List<Dish> list = dishService.list(categoryId);
+        return Result.success(list);
+    }
+
+    /**
+     * キャッシュをクリアします
+     * @param pattern
+     */
+    private void cleanCache(String pattern){
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 
 }

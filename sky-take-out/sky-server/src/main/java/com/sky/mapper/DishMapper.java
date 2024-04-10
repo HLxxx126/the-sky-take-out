@@ -7,10 +7,8 @@ import com.sky.entity.Dish;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -22,7 +20,7 @@ public interface DishMapper {
      * @param categoryId
      * @return
      */
-    @Select("select count(id) from dish where category_id = #{categoryId}")
+    @Select("select count(id) from sky_take_out.dish where category_id = #{categoryId}")
     Integer countByCategoryId(Long categoryId);
 
     /**
@@ -51,7 +49,7 @@ public interface DishMapper {
      * Idに基づいてメニューを削除する
      * @param id
      */
-    @Delete("delete from dish where id = #{id}")
+    @Delete("delete from sky_take_out.dish where id = #{id}")
     void deleteById(Long id);
 
     /**
@@ -66,4 +64,11 @@ public interface DishMapper {
      */
     @AutoFill(value = OperationType.UPDATE)
     void update(Dish dish);
+
+    /**
+     * 动态条件查询菜品
+     * @param dish
+     * @return
+     */
+    List<Dish> list(Dish dish);
 }
