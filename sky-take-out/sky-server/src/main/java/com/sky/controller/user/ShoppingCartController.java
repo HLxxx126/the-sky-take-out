@@ -37,13 +37,19 @@ public class ShoppingCartController {
      * @return
      */
     @GetMapping("/list")
-    @ApiOperation("")
+    @ApiOperation("カートを表示する")
     public Result<List<ShoppingCart>> list(){
         log.info("カートを表示する");
         List<ShoppingCart> list =shoppingCartService.showShoppingCart();
         return Result.success(list);
+    }
 
-
+    @DeleteMapping("/clean")
+    @ApiOperation("カートを空にする")
+    public Result clean(){
+        log.info("カートを空にする");
+        shoppingCartService.cleanShoppingCart();
+        return Result.success();
     }
 }
 

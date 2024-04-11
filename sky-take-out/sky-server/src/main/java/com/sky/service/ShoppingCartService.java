@@ -21,4 +21,9 @@ public interface ShoppingCartService {
      * @return
      */
     List<ShoppingCart> showShoppingCart();
+
+    /**
+     * カートを空にする
+     */
+    void cleanShoppingCart();
 }
