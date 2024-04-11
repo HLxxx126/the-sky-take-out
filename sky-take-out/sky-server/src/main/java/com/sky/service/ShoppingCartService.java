@@ -1,6 +1,9 @@
 package com.sky.service;
 
 import com.sky.dto.ShoppingCartDTO;
+import com.sky.entity.ShoppingCart;
+
+import java.util.List;
 
 /**
  * @author HLxxx
@@ -12,4 +15,10 @@ public interface ShoppingCartService {
      * @param shoppingCartDTO
      */
     void addShoppingCart(ShoppingCartDTO shoppingCartDTO);
+
+    /**
+     * カートを表示する
+     * @return
+     */
+    List<ShoppingCart> showShoppingCart();
 }
