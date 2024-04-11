@@ -26,4 +26,10 @@ public interface ShoppingCartService {
      * カートを空にする
      */
     void cleanShoppingCart();
+
+    /**
+     * 数量を減らす数量を減らす
+     * @param shoppingCartDTO
+     */
+    void subShoppingCart(ShoppingCartDTO shoppingCartDTO);
 }

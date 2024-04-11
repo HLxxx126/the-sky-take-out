@@ -101,6 +101,39 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Long userId = BaseContext.getCurrentId();
         shoppingCartMapper.deleteByUserId(userId);
     }
+
+    /**
+     * 数量を減らす
+     * @param shoppingCartDTO
+     *
+     */
+    @Override
+    public void subShoppingCart(ShoppingCartDTO shoppingCartDTO) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
+        Long userId = BaseContext.getCurrentId();
+        shoppingCart.setUserId(userId);
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+        for (ShoppingCart cart : list) {
+            Integer number = cart.getNumber();
+            if (number>1){
+                cart.setNumber(number-1);
+                shoppingCartMapper.updateNumberById(cart);
+            }
+            if (number == 1){
+                shoppingCartMapper.deleteById(cart);
+            }  if (number>1){
+                shoppingCart.setNumber(number-1);
+                shoppingCartMapper.updateNumberById(cart);
+            }
+            if (number == 1){
+                shoppingCartMapper.deleteById(cart);
+            }
+        }
+
+
+    }
+
 }
 
 
