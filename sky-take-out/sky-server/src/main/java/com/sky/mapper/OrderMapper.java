@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author HLxxx
@@ -39,4 +40,9 @@ public interface OrderMapper {
     @Select("select * from sky_take_out.orders where id = #{id}")
     Orders getById(Long id);
 
+    /**
+     * 根据动态条件统计营业额数据
+     * @param map
+     */
+    Double sumByMap(Map map);
 }
