@@ -55,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * ユーザーが注文します
+     *
      * @param ordersSubmitDTO
      * @return
      */
@@ -63,19 +64,19 @@ public class OrderServiceImpl implements OrderService {
     public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
         //各種のビジネス例外を処理する（アドレス帳が空である、ショッピングカートのデータが空である）。
         AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
-        if (addressBook == null){
+        if (addressBook == null) {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
         Long userId = BaseContext.getCurrentId();
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUserId(userId);
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
-        if (list == null || list.size() == 0){
+        if (list == null || list.size() == 0) {
             throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
         }
         //注文テーブルに1件のデータを挿入します。
         Orders orders = new Orders();
-        BeanUtils.copyProperties(ordersSubmitDTO,orders);
+        BeanUtils.copyProperties(ordersSubmitDTO, orders);
         orders.setOrderTime(LocalDateTime.now());
         orders.setPayStatus(Orders.UN_PAID);
         orders.setStatus(Orders.PENDING_PAYMENT);
@@ -88,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
         //注文明细テーブルにn件のデータを挿入します。
         for (ShoppingCart cart : list) {
             OrderDetail orderDetail = new OrderDetail();
-            BeanUtils.copyProperties(cart,orderDetail);
+            BeanUtils.copyProperties(cart, orderDetail);
             orderDetail.setOrderId(orders.getId());
             orderDetailList.add(orderDetail);
         }
@@ -103,6 +104,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         return orderSubmitVO;
     }
+
     /**
      * 订单支付
      *
@@ -157,11 +159,31 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
         //通过websocket向客户端浏览器推送消息type orderId content
         Map map = new HashMap();
-        map.put("type",1);
-        map.put("orderId",ordersDB.getId());
-        map.put("content","订单号："+outTradeNo);
+        map.put("type", 1);
+        map.put("orderId", ordersDB.getId());
+        map.put("content", "订单号：" + outTradeNo);
         String json = JSON.toJSONString(map);
         webSocketServer.sendToAllClient(json);
+    }
+
+    /**
+     * 用户催单
+     *
+     * @param id
+     */
+    @Override
+    public void reminder(Long id) {
+        Orders ordersDB = orderMapper.getById(id);
+        if (ordersDB == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Map map = new HashMap();
+        map.put("type", 2);
+        map.put("orderId",id);
+        map.put("content","订单号：" +ordersDB.getNumber());
+        String json = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
+
     }
 
 
