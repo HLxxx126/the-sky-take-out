@@ -1,10 +1,13 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
+import com.sky.mapper.OrderDetailMapper;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author HLxxx
@@ -31,6 +35,9 @@ public class ReportServiceImpl implements ReportService {
     private OrderMapper orderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
+
 
     /**
      * 统计指定时间区间内的营业额数据
@@ -150,6 +157,7 @@ public class ReportServiceImpl implements ReportService {
 
     }
 
+
     /**
      * 根据条件统计订单数量
      *
@@ -164,5 +172,26 @@ public class ReportServiceImpl implements ReportService {
         map.put("begin", begin);
         map.put("status", status);
         return orderMapper.countByMap(map);
+    }
+
+    /**
+     * 统计指定时间区间内的销量排名top10
+     *
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Override
+    public SalesTop10ReportVO getsalesTop10(LocalDate begin, LocalDate end) {
+        LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+        List<GoodsSalesDTO> salesTop10 = orderMapper.getSalesTop10(beginTime, endTime);
+        List<String> names = salesTop10.stream().map(GoodsSalesDTO::getName).collect(Collectors.toList());
+        List<Integer> numbers = salesTop10.stream().map(GoodsSalesDTO::getNumber).collect(Collectors.toList());
+        return SalesTop10ReportVO
+                .builder()
+                .nameList(StringUtils.join(names, ","))
+                .numberList(StringUtils.join(numbers, ","))
+                .build();
     }
 }
