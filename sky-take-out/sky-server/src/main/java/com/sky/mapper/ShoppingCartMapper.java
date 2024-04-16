@@ -46,4 +46,11 @@ public interface ShoppingCartMapper {
 
     @Delete("delete from sky_take_out.shopping_cart where id = #{id}")
     void deleteById(ShoppingCart shoppingCart);
+
+    /**
+     * 批量插入购物车数据
+     *
+     * @param shoppingCartList
+     */
+    void insertBatch(List<ShoppingCart> shoppingCartList);
 }
