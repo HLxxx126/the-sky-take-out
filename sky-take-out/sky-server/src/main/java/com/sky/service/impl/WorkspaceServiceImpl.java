@@ -48,8 +48,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
          */
 
         Map map = new HashMap();
-        map.put("beginTime",begin);
-        map.put("endTime",end);
+        map.put("begin",begin);
+        map.put("end",end);
 
         //查询总订单数
         Integer totalOrderCount = orderMapper.countByMap(map);
